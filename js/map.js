@@ -1,6 +1,11 @@
 (function() {
     'use strict';
-console.log("map ini")
+
+    window.map.spotWidth = 25;
+    window.map.spotHeight = 50;
+    window.map.strokeColor = '#e2e2e2';
+    window.map.strokeWidth = 5;
+
     window.map.initialize = function() {
         var canvasBox = document.getElementById('canvas-box');
         var canvasBoxWidth = canvasBox.offsetWidth;
@@ -45,72 +50,65 @@ console.log("map ini")
         this.addSingleParkingSpot(canvas, 50, 50);
     };
 
-    window.map.addSingleParkingSpot = function(canvas, posX, posY) {
-        var spotWidth = 25;
-        var spotHeight = 50;
-        var strokeColor = '#e2e2e2';
-        var strokeWidth = 5;
-
-        var line = new fabric.Line([0, 0, spotWidth, 0], $.extend({
+    window.map._drawFirstSegment = function(canvas, posX, posY) {
+        var line1 = new fabric.Line([0, 0, 0, this.spotHeight], $.extend({
             left: posX,
             top: posY
         }, {
-            stroke: strokeColor,
-            strokeWidth: strokeWidth
+            stroke: this.strokeColor,
+            strokeWidth: this.strokeWidth
         }));
 
-        canvas.add(line);
-
-        var line2 = new fabric.Line([0, 0, 0, spotHeight], $.extend({
+        var line2 = new fabric.Line([0, 0, this.strokeWidth * 1.5, 0], $.extend({
             left: posX,
-            top: posY
+            top: posY + this.spotHeight
         }, {
-            stroke: strokeColor,
-            strokeWidth: strokeWidth
+            stroke: this.strokeColor,
+            strokeWidth: this.strokeWidth
         }));
 
+        canvas.add(line1);
         canvas.add(line2);
+    };
 
-        var line3 = new fabric.Line([0, 0, 0, spotHeight], $.extend({
-            left: posX + spotWidth,
+    window.map._drawLastSegment = function(canvas, posX, posY) {
+        var line3 = new fabric.Line([0, 0, 0, this.spotHeight], $.extend({
+            left: posX + this.spotWidth,
             top: posY
         }, {
-            stroke: strokeColor,
-            strokeWidth: strokeWidth
+            stroke: this.strokeColor,
+            strokeWidth: this.strokeWidth
         }));
 
         canvas.add(line3);
 
-        var line4 = new fabric.Line([0, 0, strokeWidth * 1.5, 0], $.extend({
+        var line5 = new fabric.Line([0, 0, this.strokeWidth * 1.5, 0], $.extend({
+            left: posX + this.spotWidth - this.strokeWidth / 2,
+            top: posY + this.spotHeight
+        }, {
+            stroke: this.strokeColor,
+            strokeWidth: this.strokeWidth
+        }));
+
+        canvas.add(line5);
+    };
+
+    window.map._drawTopLine = function(canvas, posX, posY) {
+        var line = new fabric.Line([0, 0, this.spotWidth, 0], $.extend({
             left: posX,
-            top: posY + spotHeight
+            top: posY
         }, {
-            stroke: strokeColor,
-            strokeWidth: strokeWidth
+            stroke: this.strokeColor,
+            strokeWidth: this.strokeWidth
         }));
 
-        canvas.add(line4);
+        canvas.add(line);
+    };
 
-        var line4 = new fabric.Line([0, 0, strokeWidth * 1.5, 0], $.extend({
-            left: posX + spotWidth - strokeWidth / 2,
-            top: posY + spotHeight
-        }, {
-            stroke: strokeColor,
-            strokeWidth: strokeWidth
-        }));
-
-        canvas.add(line4);
-
-
-        //var rect = new fabric.Rect({
-        //    left: 50,
-        //    top: 50,
-        //    fill: '#24282c',
-        //    width: 25,
-        //    height: 50
-        //});
-
-
+    window.map.addSingleParkingSpot = function(canvas, posX, posY) {
+        this._drawTopLine(canvas, posX, posY);
+        this._drawFirstSegment(canvas, posX, posY);
+        this._drawLastSegment(canvas, posX, posY);
     };
 
 }());
