@@ -1,0 +1,12 @@
+#canvas-box {
+    width:500px;
+    height:500px;
+    position: relative;
+    background-color: lightcyan;
+}
+
+.slider {
+    position: absolute;
+    top:0;
+    left:0;
+}
